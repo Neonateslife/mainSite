@@ -5,9 +5,10 @@ import HeadWithBack from "../microcomponents/HeadWithBack";
 import { Search } from "../microcomponents/textComponents";
 import AdminUserSingle from "../microcomponents/AdminUserSingle";
 import { collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
-import { db } from "../../firebase/config";
+import { auth, db } from "../../firebase/config";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { deleteUser } from "firebase/auth";
 
 
 export default function  AdminDoctors() {
@@ -64,6 +65,7 @@ export default function  AdminDoctors() {
   const handleDelete = async (doctorId) => {
     try {
       await deleteDoc(doc(db, "doctors", doctorId));
+      await deleteUser(auth, doctorId);
       setDoctors((prevDoctors) => prevDoctors.filter((doctor) => doctor.id !== doctorId));
     } catch (error) {
       console.error("Error deleting doctor:", error);
