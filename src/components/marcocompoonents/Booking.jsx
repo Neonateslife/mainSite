@@ -7,7 +7,7 @@ import { db } from "../../firebase/config";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setBookingDetails } from "../../redux/userSlice";
-
+import { Success,Danger } from "../microcomponents/Toast";
 export default function Booking() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -24,7 +24,8 @@ export default function Booking() {
   const dispatch = useDispatch();//the state 
   const modes = [ 'select mode','Physical', 'Online'];
   const [doctorUid, setDoctorUid] = useState("")
-  
+ const [error,setError]=useState(false)
+ const [sucess,setSuccess]=useState(false)
   const selectedDoctor = useSelector(state => state.user.selectedDoctor);
   
   useEffect(() => {
@@ -93,10 +94,17 @@ const handleBooking = async (event) => {
       const bookingId = bookingRef.id;
 
       dispatch(setBookingDetails({ day: selectedDay, time: selectedTime, mode: selectedMode, date: selectedDate, bookingId }));
-
-      alert("Booking successful!");
-      navigate(`/appointment/doctor/${id}/checkout?bookingId=${bookingId}`);
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+        navigate(`/appointment/doctor/${id}/checkout?bookingId=${bookingId}`);
+      }, 5000);
+     
     } catch (error) {
+      setError(true);
+      setTimeout(() => {
+        setError(false);
+      }, 5000);
       console.error("Error adding booking: ", error);
     }
   }
@@ -107,6 +115,18 @@ const handleBooking = async (event) => {
   return (
     <>
       <HeadWithBack heading="Booking Appointment" />
+      <div className="toast">
+      {
+        <div className="toast">
+          {
+            error&& (<Danger text="Booking failed!" />)
+          }
+          {
+            sucess&& (<Success text="Booking successful!" />)
+          }
+        </div>
+      }
+      </div>
       <div className="div w-[90%] m-auto pt-10">
         <div className="div relative -z-50 w-[70px] h-[70px] rounded-[50%] m-auto md:w-[150px] md:h-[150px]">
           <img src="https://picsum.photos/200/300" className="w-full h-full rounded-[50%] border-" alt="loading" loading='lazy' />

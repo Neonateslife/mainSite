@@ -52,7 +52,7 @@ export function File(props) {
                 id={props.ids}
                 multiple
                 name={props.name}
-                className={`${props.classes} rounded-[10px] p-3 shadow-md w-[100%]`}
+                className={`${props.classes} rounded-[10px]   w-[100%]`}
                 onChange={props.onChange}
             />
         </div>

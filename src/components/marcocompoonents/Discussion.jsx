@@ -133,14 +133,14 @@ export default function Discussion() {
   return (
     <>
       <HeadWithBack heading={messages.map((msg)=>(msg.id))} />
-      <div className="div w-full  h-full flex justify-between relative md:h-[95%] overflow-x-hidden">
+      <div className="div w-full  h-full flex justify-between md:relative md:h-[95%] overflow-x-hidden">
         <div className="message p-5 h-full w-full overflow-y-auto pb-[100px] md:pb-[120px]"> {/* Add padding-bottom here */}
           {messages.map((msg) => (
             <MessageHolder key={msg.id} message={msg} />
           ))}
           <div ref={messageEndRef}></div>
         </div>
-        <form onSubmit={sendMessage} className="input flex gap-x-[10px] w-full bg-gray-200 p-2 absolute bottom-0 md:h-[100px] ">
+        <form onSubmit={sendMessage} className="input flex gap-x-[10px] w-full bg-gray-200 p-2 absolute bottom-0 md:absolute md:h-[100px] ">
           <input
             type="text"
             ref={inputRef}
