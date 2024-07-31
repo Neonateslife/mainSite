@@ -114,8 +114,38 @@ const Doctor = () => {
   });
   const [profileImage, setProfileImage] = useState(null);
   const user = useSelector((state) => state.auth.user);
-  const navigate = useNavigate()
-  const dispatch  = useDispatch()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchDoctorData = async () => {
+      try {
+        const doctorQuery = query(collection(db, "doctors"), where("uid", "==", user));
+        const querySnapshot = await getDocs(doctorQuery);
+        if (!querySnapshot.empty) {
+          const docData = querySnapshot.docs[0].data();
+          setFormData({
+            firstName: docData.firstName,
+            lastName: docData.lastName,
+            bio: docData.bio,
+          });
+          setAvailability(docData.availability || {});
+          const checkedDays = {};
+          for (const day in docData.availability) {
+            checkedDays[day] = docData.availability[day].length > 0;
+          }
+          setDaysChecked(checkedDays);
+        }
+      } catch (error) {
+        console.error("Error fetching doctor data: ", error);
+      }
+    };
+
+    if (user) {
+      fetchDoctorData();
+    }
+  }, [user]);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -132,20 +162,25 @@ const Doctor = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      // Query to find the document where uid matches the user
       const doctorQuery = query(collection(db, "doctors"), where("uid", "==", user));
       const querySnapshot = await getDocs(doctorQuery);
       if (!querySnapshot.empty) {
         const docId = querySnapshot.docs[0].id;
         const userDoc = doc(db, "doctors", docId);
+        const existingDoc = querySnapshot.docs[0].data();
+
+        const updatedAvailability = {
+          ...existingDoc.availability,
+          ...availability,
+        };
+
         await updateDoc(userDoc, {
           firstName: formData.firstName,
           lastName: formData.lastName,
           bio: formData.bio,
-          availability: availability, // Update availability
+          availability: updatedAvailability,
         });
 
-        // Handle profile image upload if needed
         if (profileImage) {
           // Add your image upload logic here if required
         }
@@ -158,11 +193,11 @@ const Doctor = () => {
       console.error("Error updating profile: ", error);
     }
   };
+
   const handleLogOut = async () => {
     const auth = getAuth();
     try {
       await signOut(auth);
-      // Redirect the user to the login page or home page
       dispatch(clearUser());
       navigate('/');
       console.log('User logged out successfully');
@@ -170,8 +205,8 @@ const Doctor = () => {
       console.error('Error logging out: ', error);
     }
   };
+
   return (
-    <>
     <div className="overflow-y-auto pb-[120px]">
       <div className="w-[50px] h-[50px] relative m-auto mt-[50px] md:w-[100px] md:h-[100px]">
         <div className="absolute bottom-0 right-[10px] bg-white p-2 rounded-full w-[max-content]">
@@ -186,25 +221,21 @@ const Doctor = () => {
       <form onSubmit={handleSubmit}>
         <Input label="Edit First name" name="firstName" placeholder="Enter name" value={formData.firstName} onChange={handleChange} />
         <Input label="Edit Last name" name="lastName" placeholder="Enter name" value={formData.lastName} onChange={handleChange} />
-
-       <div className="div w-[300px] m-auto pt-[20px] md:w-[450px]">
-       <DoctorAvailabilityForm
+        <div className="div w-[300px] m-auto pt-[20px] md:w-[450px]">
+          <DoctorAvailabilityForm
             availability={availability}
             setAvailability={setAvailability}
             daysChecked={daysChecked}
             setDaysChecked={setDaysChecked}
           />
-       </div>
-        <div className="w-[300px] m-auto pt-[20px] md:w-[450px]" onClick={() => console.log("cliced me ")}>
+        </div>
+        <div className="w-[300px] m-auto pt-[20px] md:w-[450px]">
           <Button3
             bg="bg-bluebutton"
             color="text-black"
             rounded="rounded-[10px]"
             text="Edit password"
-
           />
-        </div>
-        <div className="w-[300px] m-auto pt-[20px] md:w-[450px]">
         </div>
         <File label="Edit Profile Picture" type="file" onChange={handleImageChange} />
         <div className="w-[340px] m-auto pt-[20px] md:w-[500px]">
@@ -213,16 +244,11 @@ const Doctor = () => {
         <div className="w-[300px] m-auto pt-[20px] md:w-[450px]">
           <RoundedButton text="Save" type="submit" onClick={handleSubmit} />
         </div>
-
         <div className="w-[300px] m-auto pt-[20px] md:w-[450px]">
-          <RoundedButton text="Signout" type="button" bg='red'  onClick={handleLogOut} />
+          <RoundedButton text="Signout" type="button" bg='red' onClick={handleLogOut} />
         </div>
-        
       </form>
-    
-   
     </div>
-    </>
   );
 };
 
