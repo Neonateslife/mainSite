@@ -128,12 +128,12 @@ const MessageDoctor = (props) => {
               {props.Chatsenderrole === 'doctor' || props.Chatsenderrole === 'admin' ? <li className="w-[max-content]"><div className="verified"><MdVerifiedUser style={style} color={'#3b8aff'} /></div></li> : ''}
               <TimeFormater timestamp={props.Cahttime ? props.Cahttime : null} />
               {canDeleteComment && (
-              <RiDeleteBin4Line
-                style={style2}
-                className="icon-small"
-                onClick={() => props.handleDeleteComment(props.commentId)}
-              />
-            )}
+                <RiDeleteBin4Line
+                  style={style2}
+                  className="icon-small"
+                  onClick={() => props.handleDeleteComment(props.commentId)}
+                />
+              )}
             </ul>
           </div>
           <div className="postText w-full">
@@ -163,8 +163,8 @@ export default function PostCard(props) {
     setComment(!comment);
   };
 
-const handleAddComment = async () => {
-  // if (comment.trim() !== '') {
+  const handleAddComment = async () => {
+    // if (comment.trim() !== '') {
     const commentData = { // Renamed to 'commentData'
       uid: props.userUid,
       comment: newComment, // Use the state variable here
@@ -177,32 +177,32 @@ const handleAddComment = async () => {
     };
 
     try {
-      await addComment(props.postId, commentData); 
+      await addComment(props.postId, commentData);
       setComments((prevComments) => [...prevComments, commentData]);
       setNewComment(''); // Clear the input field
     } catch (error) {
       console.error('Error adding comment:', error);
     }
-  // }
-};
+    // }
+  };
 
   const handleDeletePost = async () => {
     try {
-        await props.handleDeletePost(props.postId);
+      await props.handleDeletePost(props.postId);
     } catch (error) {
-        console.error('Error deleting post:', error);
+      console.error('Error deleting post:', error);
     }
-};
+  };
 
-const handleDeleteComment = async (commentId) => {
-  try {
-    await deleteComment(commentId);
-    setComments((prevComments) => prevComments.filter((comment) => comment.id !== commentId));
-  } catch (error) {
-    console.error('Error deleting comment:', error);
-  }
-};
-const canDelete = props.userUid === props.postUid || props.userType === 'admin';
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await deleteComment(commentId);
+      setComments((prevComments) => prevComments.filter((comment) => comment.id !== commentId));
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    }
+  };
+  const canDelete = props.userUid === props.postUid || props.userType === 'admin';
   return (
     <>
       <div className="border-y-[1px] border-x-greytextfade pt-5 w-full -z-50">
@@ -249,7 +249,7 @@ const canDelete = props.userUid === props.postUid || props.userType === 'admin';
                   {comments.length ? (comments.length >= 1000 ? '1000+' : comments.length) : ''}
                 </div>
               </span>
-              <CiShare1 style={style2} className="icon-small"  onClick={() => props.handleSavePost(props.postId)} />
+              <CiShare1 style={style2} className="icon-small" onClick={() => props.handleSavePost(props.postId)} />
               {canDelete && <RiDeleteBin4Line style={style2} className="icon-small" onClick={handleDeletePost} />}
             </div>
           </div>
@@ -269,7 +269,7 @@ const canDelete = props.userUid === props.postUid || props.userType === 'admin';
                   currentUserId={props.userUid} // Pass current user ID
                   commentUserId={comment.uid} // Pass comment author ID
                   handleDeleteComment={handleDeleteComment} // Pass delete comment handler
-userType={props.userType}
+                  userType={props.userType}
                 />
               ))}
             </div>

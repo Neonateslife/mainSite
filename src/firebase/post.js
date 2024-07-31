@@ -38,7 +38,7 @@ export const fetchPostsWithComments = (callback) => {
   });
 };
 
-export const createPost = async (userUid, content, imageFiles) => {
+export const createPost = async (userUid, content, imageFiles,userType) => {
   let userDetails;
 
   const doctorsQuery = query(collection(db, 'doctors'), where("uid", "==", userUid));
@@ -60,6 +60,7 @@ export const createPost = async (userUid, content, imageFiles) => {
     content: content,
     firstName: userDetails.firstName,
     secondName: userDetails.secondName,
+    role: userType,
     timestamp: serverTimestamp(),
   };
 

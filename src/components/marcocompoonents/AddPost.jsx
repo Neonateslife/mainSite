@@ -61,7 +61,7 @@ export default function AddPost() {
     setLoading(true)
     try {
       
-      await createPost(userUid, content, selectedFiles);
+      await createPost(userUid, content, selectedFiles,userType);
       alert("Post created successfully!");
       setContent("");
       setSelectedFiles([]);
